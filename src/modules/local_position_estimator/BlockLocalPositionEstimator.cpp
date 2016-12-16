@@ -417,7 +417,8 @@ void BlockLocalPositionEstimator::update()
 	// sensor corrections/ initializations
 	if (gpsUpdated) {
 		if (!_gpsInitialized) {
-			gpsInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// gpsInit();---
 
 		} else {
 			gpsCorrect();
@@ -426,7 +427,8 @@ void BlockLocalPositionEstimator::update()
 
 	if (baroUpdated) {
 		if (!_baroInitialized) {
-			baroInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// baroInit();---
 
 		} else {
 			baroCorrect();
@@ -435,7 +437,8 @@ void BlockLocalPositionEstimator::update()
 
 	if (lidarUpdated) {
 		if (!_lidarInitialized) {
-			lidarInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// lidarInit();---
 
 		} else {
 			lidarCorrect();
@@ -444,7 +447,8 @@ void BlockLocalPositionEstimator::update()
 
 	if (sonarUpdated) {
 		if (!_sonarInitialized) {
-			sonarInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// sonarInit();---
 
 		} else {
 			sonarCorrect();
@@ -453,7 +457,8 @@ void BlockLocalPositionEstimator::update()
 
 	if (flowUpdated) {
 		if (!_flowInitialized) {
-			flowInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// flowInit();---
 
 		} else {
 			perf_begin(_loop_perf);// TODO
@@ -474,7 +479,8 @@ void BlockLocalPositionEstimator::update()
 
 	if (mocapUpdated) {
 		if (!_mocapInitialized) {
-			mocapInit();
+			//Cleandone modification: dont use any sensor exept vision
+			// mocapInit();---
 
 		} else {
 			mocapCorrect();

@@ -21,7 +21,13 @@ void BlockLocalPositionEstimator::visionInit()
 
 	// increament sums for mean
 	if (_visionStats.getCount() > REQ_VISION_INIT_COUNT) {
-		_visionOrigin = _visionStats.getMean();
+
+		//Cleandrone modification in order to put the vision estimation on the actual pose when vision comes in
+		// _visionOrigin = _visionStats.getMean();---
+		_visionOrigin(Y_vision_x) = _visionStats.getMean()(Y_vision_x) - _x(X_x);//+++
+		_visionOrigin(Y_vision_y) = _visionStats.getMean()(Y_vision_y) - _x(X_y);//+++
+		_visionOrigin(Y_vision_z) = _visionStats.getMean()(Y_vision_z) - _x(X_z);//+++
+
 		mavlink_and_console_log_info(&mavlink_log_pub, "[lpe] vision position init: "
 					     "%5.2f %5.2f %5.2f m std %5.2f %5.2f %5.2f m",
 					     double(_visionStats.getMean()(0)),
@@ -59,7 +65,8 @@ void BlockLocalPositionEstimator::visionCorrect()
 	if (visionMeasure(y) != OK) { return; }
 
 	// make measurement relative to origin
-	y -= _visionOrigin;
+	//Cleandrone modification: remove the offset. Vision is an absolut positioning 
+	// y -= _visionOrigin;---
 
 	// vision measurement matrix, measures position
 	Matrix<float, n_y_vision, n_x> C;
