@@ -53,6 +53,7 @@
 #include <uORB/topics/battery_status.h>
 #include <uORB/topics/sensor_combined.h>
 #include <uORB/topics/vehicle_global_position.h>
+#include <uORB/topics/vehicle_gps_position.h>
 
 #include <drivers/drv_hrt.h>
 
@@ -94,10 +95,12 @@
 static struct battery_status_s *battery_status;
 static struct vehicle_global_position_s *global_pos;
 static struct sensor_combined_s *sensor_combined;
+static struct vehicle_gps_position_s *gps_pos;
 
 static int battery_status_sub = -1;
 static int vehicle_global_position_sub = -1;
 static int sensor_sub = -1;
+static int vehicle_gps_position_sub = -1;
 
 /**
  * Initializes the uORB subscriptions.
@@ -107,6 +110,7 @@ bool frsky_init()
 	battery_status = malloc(sizeof(struct battery_status_s));
 	global_pos = malloc(sizeof(struct vehicle_global_position_s));
 	sensor_combined = malloc(sizeof(struct sensor_combined_s));
+	gps_pos = malloc(sizeof(struct vehicle_gps_position_s));
 
 	if (battery_status == NULL || global_pos == NULL || sensor_combined == NULL) {
 		return false;
@@ -115,6 +119,7 @@ bool frsky_init()
 	battery_status_sub = orb_subscribe(ORB_ID(battery_status));
 	vehicle_global_position_sub = orb_subscribe(ORB_ID(vehicle_global_position));
 	sensor_sub = orb_subscribe(ORB_ID(sensor_combined));
+	vehicle_gps_position_sub = orb_subscribe(ORB_ID(vehicle_gps_position));
 	return true;
 }
 
@@ -123,6 +128,7 @@ void frsky_deinit()
 	free(battery_status);
 	free(global_pos);
 	free(sensor_combined);
+	free(gps_pos);
 }
 
 /**
@@ -195,6 +201,13 @@ void frsky_update_topics()
 	if (updated) {
 		orb_copy(ORB_ID(vehicle_global_position), vehicle_global_position_sub, global_pos);
 	}
+
+	/* get a local copy of the gps position data */
+	orb_check(vehicle_gps_position_sub, &updated);
+
+	if (updated) {
+		orb_copy(ORB_ID(vehicle_gps_position), vehicle_gps_position_sub, gps_pos);
+	}
 }
 
 /**
@@ -261,6 +274,8 @@ void frsky_send_frame2(int uart)
 
 	frsky_send_data(uart, FRSKY_ID_GPS_COURS_BP, course);
 	frsky_send_data(uart, FRSKY_ID_GPS_COURS_AP, frac(course) * 1000.0f);
+
+	frsky_send_data(uart, FRSKY_ID_TEMP2, gps_pos->satellites_used*10.0f);
 
 	frsky_send_data(uart, FRSKY_ID_GPS_LAT_BP, lat);
 	frsky_send_data(uart, FRSKY_ID_GPS_LAT_AP, frac(lat) * 10000.0f);
