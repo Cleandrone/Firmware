@@ -937,18 +937,56 @@ MavlinkReceiver::handle_message_set_actuator_control_target(mavlink_message_t *m
 		if (_control_mode.flag_control_offboard_enabled) {
 
 			actuator_controls.timestamp = hrt_absolute_time();
+			if (set_actuator_control_target.group_mlx == 0)
+	        {
+				/* Set duty cycles for the servos in actuator_controls_0 */
+				for (size_t i = 0; i < 8; i++) {
+					actuator_controls.control[i] = set_actuator_control_target.controls[i];
+				}
 
-			/* Set duty cycles for the servos in actuator_controls_0 */
-			for (size_t i = 0; i < 8; i++) {
-				actuator_controls.control[i] = set_actuator_control_target.controls[i];
-			}
+				if (_actuator_controls_pub == nullptr) {
+					_actuator_controls_pub = orb_advertise(ORB_ID(actuator_controls_0), &actuator_controls);
+				} else {
+					orb_publish(ORB_ID(actuator_controls_0), _actuator_controls_pub, &actuator_controls);
+				}
+			}else if (set_actuator_control_target.group_mlx == 1)
+            {
+                /* Set duty cycles for the servos in actuator_controls_1 */
+                for(size_t i = 0; i < 8; i++) {
+                    actuator_controls.control[i] = set_actuator_control_target.controls[i];
+                }
+ 
+                if (_actuator_controls_pub == nullptr) {
+                    _actuator_controls_pub = orb_advertise(ORB_ID(actuator_controls_1), &actuator_controls);
+                } else {
+                    orb_publish(ORB_ID(actuator_controls_1), _actuator_controls_pub, &actuator_controls);
+                }
+            }else if (set_actuator_control_target.group_mlx == 2)
+            {
+                /* Set duty cycles for the servos in actuator_controls_2 */
+                for(size_t i = 0; i < 8; i++) {
+                    actuator_controls.control[i] = set_actuator_control_target.controls[i];
+                }
+ 
+                if (_actuator_controls_pub == nullptr) {
+                    _actuator_controls_pub = orb_advertise(ORB_ID(actuator_controls_2), &actuator_controls);
+                } else {
+                    orb_publish(ORB_ID(actuator_controls_2), _actuator_controls_pub, &actuator_controls);
+                }
+            }else if (set_actuator_control_target.group_mlx == 3)
+            {
+                /* Set duty cycles for the servos in actuator_controls_3 */
+                for(size_t i = 0; i < 8; i++) {
+                    actuator_controls.control[i] = set_actuator_control_target.controls[i];
+                }
+ 
+                if (_actuator_controls_pub == nullptr) {
+                    _actuator_controls_pub = orb_advertise(ORB_ID(actuator_controls_3), &actuator_controls);
+                } else {
+                    orb_publish(ORB_ID(actuator_controls_3), _actuator_controls_pub, &actuator_controls);
+                }
+            }
 
-			if (_actuator_controls_pub == nullptr) {
-				_actuator_controls_pub = orb_advertise(ORB_ID(actuator_controls_0), &actuator_controls);
-
-			} else {
-				orb_publish(ORB_ID(actuator_controls_0), _actuator_controls_pub, &actuator_controls);
-			}
 		}
 	}
 
